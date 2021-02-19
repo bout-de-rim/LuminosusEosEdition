@@ -40,12 +40,15 @@ MidiEvent MidiEvent::FromRawMessage(QString /*portName*/, std::vector<unsigned c
 	bool convertedFromNoteOff = false;
 	if (type == MidiConstants::PROGRAM_CHANGE) {
 		// Program Change doesn't have value, use program number as value:
-		value = 1.0;
-	} else if (type == MidiConstants::NOTE_OFF) {
-		// convert note_off to note_on with value 0:
-		type = MidiConstants::NOTE_ON;
-		value = 0.0;
-		convertedFromNoteOff = true;
+        value = 1.0;
+    } else if (type == MidiConstants::NOTE_OFF) {
+        // convert note_off to note_on with value 0:
+        type = MidiConstants::NOTE_ON;
+        value = 0.0;
+        convertedFromNoteOff = true;
+    } else if (type == MidiConstants::PITCH_WHEEL_CHANGE) {
+        // value is the last bytes last 7 bits:
+        value = ((message->at(2)<<7) + message->at(1))/16383.;
 	} else {
 		// value is the last bytes last 7 bits:
 		value = message->at(2) / 127.;
@@ -399,11 +402,15 @@ void MidiManager::addToLog(bool out, int type, int channel, int target, double v
 	case MidiConstants::CONTROL_CHANGE:
 		msg.append(" Control Change %1 = %2");
 		msg = msg.arg(QString::number(target), QString::number(int(value * 127)));
-		break;
-	case MidiConstants::PROGRAM_CHANGE:
-		msg.append(" Program Change %1");
-		msg = msg.arg(QString::number(target + 1));
-		break;
+        break;
+    case MidiConstants::PROGRAM_CHANGE:
+        msg.append(" Program Change %1");
+        msg = msg.arg(QString::number(target + 1));
+        break;
+    case MidiConstants::PITCH_WHEEL_CHANGE:
+        msg.append(" Pitch wheel Change %1");
+        msg = msg.arg(QString::number(value));
+        break;
 	default:
 		msg.append(" Type: %1 Data1: %2 Data2: %3");
 		msg = msg.arg(QString::number(type), QString::number(target), QString::number(int(value*127)));

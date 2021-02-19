@@ -102,11 +102,15 @@ namespace MidiConstants {
 	/**
 	 * @brief CONTROL_CHANGE is the Midi code for a Control Change message
 	 */
-	static const unsigned char CONTROL_CHANGE = 0b1011;
-	/**
-	 * @brief PROGRAM_CHANGE is the Midi code for a Program Change message
-	 */
-	static const unsigned char PROGRAM_CHANGE = 0b1100;
+    static const unsigned char CONTROL_CHANGE = 0b1011;
+    /**
+     * @brief PROGRAM_CHANGE is the Midi code for a Program Change message
+     */
+    static const unsigned char PROGRAM_CHANGE = 0b1100;
+    /**
+     * @brief PROGRAM_CHANGE is the Midi code for a Program Change message
+     */
+    static const unsigned char PITCH_WHEEL_CHANGE = 0b1110;
 
     typedef std::function<void(MidiEvent)> NextEventCallback;
 }
