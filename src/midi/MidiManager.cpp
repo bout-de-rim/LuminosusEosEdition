@@ -393,7 +393,15 @@ void MidiManager::addToLog(bool out, QString text) const {
 }
 
 void MidiManager::addToLog(bool out, int type, int channel, int target, double value) const {
-	QString msg = "[CH " + QString::number(channel) + "]";
+    QString msg = "[CH " + QString::number(channel) + "]";
+    if(1){
+        static unsigned char a,b,c;
+        a = (type << 4) | (channel - 1);
+        b = target;
+        c = static_cast<unsigned char>(value * 127);
+        msg.prepend("[%1 %2 %3]");
+        msg = msg.arg(a,0,16).arg(b,0,16).arg(c,0,16);
+    }
 	switch (type) {
 	case MidiConstants::NOTE_ON:
 	{
