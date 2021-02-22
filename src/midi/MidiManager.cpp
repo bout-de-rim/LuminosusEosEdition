@@ -46,6 +46,18 @@ MidiEvent MidiEvent::FromRawMessage(QString /*portName*/, std::vector<unsigned c
         type = MidiConstants::NOTE_ON;
         value = 0.0;
         convertedFromNoteOff = true;
+    } else if (type == MidiConstants::CONTROL_CHANGE) {
+        // in mackie control, [B0 1* **] are V-Pots
+        if (target & 0x10){
+            // [B0 1i xx] i: VPot ID,
+            // xx : (0 s v v v v v v) s : direction bit
+            // vvvvvv : number of ticks (6bits)
+            double s=(message->at(2) & (0b01000000))>>6;
+            double v=message->at(2) & (0b00111111);
+            value = (1-2*s)*v;}
+        else {
+            // value is the last bytes last 7 bits:
+            value = message->at(2) / 127.;}
     } else if (type == MidiConstants::PITCH_WHEEL_CHANGE) {
         // value is the last bytes last 7 bits:
         value = ((message->at(2)<<7) + message->at(1))/16383.;
@@ -401,7 +413,7 @@ void MidiManager::addToLog(bool out, int type, int channel, int target, double v
 	}
 	case MidiConstants::CONTROL_CHANGE:
 		msg.append(" Control Change %1 = %2");
-		msg = msg.arg(QString::number(target), QString::number(int(value * 127)));
+        msg = msg.arg(QString::number(target), QString::number(int(value)));
         break;
     case MidiConstants::PROGRAM_CHANGE:
         msg.append(" Program Change %1");
@@ -464,7 +476,7 @@ void MidiManager::sendChannelVoiceMessage(unsigned char type, unsigned char chan
     static std::vector<unsigned char> message(3);
 	message[0] = (type << 4) | (channel - 1);
 	message[1] = target;
-    message[2] = static_cast<unsigned char>(value * 127);
+    message[2] = static_cast<unsigned char>(value);
 	for (RtMidiOut* output: m_outputs) {
         try {
             output->sendMessage(&message);
@@ -474,7 +486,7 @@ void MidiManager::sendChannelVoiceMessage(unsigned char type, unsigned char chan
             output->closePort();
         }
 	}
-	addToLog(true, type, channel, target, value);
+    addToLog(true, type, channel, target, message[2]);
 #endif
 }
 

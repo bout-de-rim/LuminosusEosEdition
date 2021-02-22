@@ -43,15 +43,11 @@ void EosEncoderBlock::onMidiMessage(MidiEvent event) {
         int channel = m_useDefaultChannel ? m_controller->midi()->getDefaultInputChannel() : m_channel;
         if (channel == MidiConstants::OMNI_MODE_CHANNEL || event.channel == channel) {
             // channel and target are correct
-            // set value:
-            double relativeValue = event.value * 127.0;
-            if (relativeValue > 64) {
-                // value is 7-bit twos complement
-                relativeValue -= 128;
-            }
+            // set value 1:1 scale between encoder and angle
+            double relativeValue = event.value * 3 * 360/24.;
             // accelerate:
             if (m_accelerate)
-                relativeValue = (qAbs(relativeValue) > 1) ? relativeValue * 2 : relativeValue;
+                relativeValue = (qAbs(relativeValue) > 1) ? relativeValue * 5 : relativeValue;
 
             QString message;
             if (!m_active)
