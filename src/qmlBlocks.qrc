@@ -89,7 +89,7 @@
         <file>qml/Blocks/Logic/CommandlineBlock.qml</file>
         <file>qml/Blocks/Logic/TimerBlock.qml</file>
         <file>qml/Blocks/Luminosus/GuiEditorBlock.qml</file>
-        <file>qml/Blocks/Eos/EosEncoderBlock.qml</file>
+        <file>qml/Blocks/Eos/XtouchToEosEncoderBlock.qml</file>
         <file>qml/Blocks/Luminosus/SafeLockBlock.qml</file>
         <file>qml/Blocks/Audio/AudioStreamingBlock.qml</file>
         <file>qml/Blocks/Luminosus/GroupBlock.qml</file>
@@ -103,5 +103,7 @@
         <file>qml/Blocks/Logic/PresentationSlideDmxBlock.qml</file>
         <file>qml/Blocks/sACN/VirtualFixtureBlock.qml</file>
         <file>qml/Blocks/Hog4/Hog4FaderBlock.qml</file>
+        <file>qml/Blocks/Eos/EosEncoderBlock.qml</file>
+        <file>qml/Blocks/Eos/XtouchToEosEncoderBlock.qml</file>
     </qresource>
 </RCC>

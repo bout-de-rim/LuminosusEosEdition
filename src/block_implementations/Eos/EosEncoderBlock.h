@@ -94,6 +94,7 @@ protected:
     BoolAttribute m_active;
     BoolAttribute m_accelerate;
     BoolAttribute m_feedbackEnabled;
+    BoolAttribute m_mcmidiEnabled;
 };
 
 #endif // EOSENCODERBLOCK_H
