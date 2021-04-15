@@ -15,7 +15,6 @@ EosEncoderBlock::EosEncoderBlock(MainController* controller, QString uid)
     , m_active(this, "active", false, true)
     , m_accelerate(this, "accelerate", true, true)
     , m_feedbackEnabled(this, "feedback", true, true)
-    , m_mcmidiEnabled(this, "mcmidi", true, true)
 {
     connect(m_controller->midi(), SIGNAL(messageReceived(MidiEvent)), this, SLOT(onMidiMessage(MidiEvent)));
     connect(&m_feedbackEnabled, SIGNAL(valueChanged()), this, SLOT(onFeedbackEnabledChanged()));
@@ -43,12 +42,9 @@ void EosEncoderBlock::onMidiMessage(MidiEvent event) {
         // check if channel is correct:
         int channel = m_useDefaultChannel ? m_controller->midi()->getDefaultInputChannel() : m_channel;
         if (channel == MidiConstants::OMNI_MODE_CHANNEL || event.channel == channel) {
-            double relativeValue = event.value;
             // channel and target are correct
-            if (m_mcmidiEnabled)
-                // set value 1:1 scale between encoder and angle
-                relativeValue = relativeValue * 3 * 360/24.;
-
+            // set value 1:1 scale between encoder and angle
+            double relativeValue = event.value * 3 * 360/24.;
             // accelerate:
             if (m_accelerate)
                 relativeValue = (qAbs(relativeValue) > 1) ? relativeValue * 5 : relativeValue;

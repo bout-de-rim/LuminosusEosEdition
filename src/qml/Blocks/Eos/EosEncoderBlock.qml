@@ -126,18 +126,6 @@ BlockBase {
                 }
             }
 
-            BlockRow {
-                visible: block.attr("active").val === true
-                Text {
-                    text: "MackieControl:"
-                    width: parent.width - 30*dp
-                }
-                AttributeCheckbox {
-                    width: 30*dp
-                    attr: block.attr("mcmidi")
-                }
-            }
-
 
         }
     }  // end Settings Component
