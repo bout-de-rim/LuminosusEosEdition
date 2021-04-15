@@ -12,9 +12,12 @@ EosEncoderBlock::EosEncoderBlock(MainController* controller, QString uid)
     , m_learning(false)
     , m_parameterName(this, "parameterName", "pan")
     , m_fineMode(this, "fineMode", false, /*persistent*/ false)
+    , m_enabled(this, "enabled", true, true)
+    , m_conditional(this, "conditional", true, true)
     , m_active(this, "active", false, true)
     , m_accelerate(this, "accelerate", true, true)
     , m_feedbackEnabled(this, "feedback", true, true)
+    , m_multiplier(this, "multiplier",360/24,-10000,10000,true)
 {
     connect(m_controller->midi(), SIGNAL(messageReceived(MidiEvent)), this, SLOT(onMidiMessage(MidiEvent)));
     connect(&m_feedbackEnabled, SIGNAL(valueChanged()), this, SLOT(onFeedbackEnabledChanged()));
@@ -37,17 +40,17 @@ void EosEncoderBlock::setAdditionalState(const QJsonObject &state) {
 void EosEncoderBlock::onMidiMessage(MidiEvent event) {
     // from improbable to probable
     // check if this is a ControlChange message and target is correct:
-    if (event.type == MidiConstants::CONTROL_CHANGE
+    if (m_enabled && event.type == MidiConstants::CONTROL_CHANGE
             && event.target == m_target) {
         // check if channel is correct:
         int channel = m_useDefaultChannel ? m_controller->midi()->getDefaultInputChannel() : m_channel;
         if (channel == MidiConstants::OMNI_MODE_CHANNEL || event.channel == channel) {
             // channel and target are correct
             // set value 1:1 scale between encoder and angle
-            double relativeValue = event.value * 3 * 360/24.;
+            double relativeValue = event.value * m_multiplier.getValue();
             // accelerate:
             if (m_accelerate)
-                relativeValue = (qAbs(relativeValue) > 1) ? relativeValue * 5 : relativeValue;
+                relativeValue = (qAbs(event.value) > 1) ? relativeValue * 5 : relativeValue;
 
             QString message;
             if (!m_active)

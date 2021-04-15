@@ -6,7 +6,7 @@ import "../../CustomControls"
 BlockBase {
     id: root
     width: 130*dp
-    height: 90*dp
+    height: block.attr("conditional")? 120*dp : 90*dp
     settingsComponent: settings
 
     StretchColumn {
@@ -40,7 +40,27 @@ BlockBase {
             }
             mappingID: block.getUid() + "fine"
         }
+ BlockRow {
+        ButtonSideLine {
+            visible: block.attr("conditional").val === true
+            height: 30*dp
+            text: block.attr("enabled").val ? "Enabled" : "Enable"
+            onActiveChanged: {
+                    block.attr("enabled").val = true
+            }
+            mappingID: block.getUid() + "enable"
+        }
 
+        ButtonSideLine {
+            visible: block.attr("conditional").val === true
+            height: 30*dp
+            text: block.attr("enabled").val ? "Disable" : "Disabled"
+            onActiveChanged: {
+                    block.attr("enabled").val = false
+            }
+            mappingID: block.getUid() + "disable"
+        }
+}
         DragArea {
             text: "Encoder"
 
@@ -102,7 +122,17 @@ BlockBase {
                     attr: block.attr("accelerate")
                 }
             }
-
+            BlockRow {
+                Text {
+                    text: "conditional:"
+                    width: parent.width - 30*dp
+                }
+                AttributeCheckbox {
+                    width: 30*dp
+                    attr: block.attr("conditional")
+                    onActiveChanged: block.height = block.attr("conditional")? 120*dp : 90*dp
+                }
+            }
             BlockRow {
                 Text {
                     text: "active:"
@@ -115,7 +145,7 @@ BlockBase {
             }
 
             BlockRow {
-                visible: block.attr("active").val === true
+          //      visible: block.attr("active").val === true
                 Text {
                     text: "feedback:"
                     width: parent.width - 30*dp
@@ -125,8 +155,24 @@ BlockBase {
                     attr: block.attr("feedback")
                 }
             }
-
-
+            BlockRow {
+          //      visible: block.attr("active").val === true
+                Text {
+                    text: "Ticks multiplier:"
+                    width: parent.width - 30*dp
+                }
+                TextInput {
+                    id: textInput
+                    width: 30*dp
+                    validator: DoubleValidator
+                    text: block.attr("multiplier").val
+                    onTextChanged: {
+                        if (text !== block.attr("multiplier").val) {
+                            block.attr("multiplier").val = text
+                        }
+                    }
+                }
+            }
         }
     }  // end Settings Component
 }

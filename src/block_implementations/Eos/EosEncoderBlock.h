@@ -91,9 +91,12 @@ protected:
 
     StringAttribute m_parameterName;
     BoolAttribute m_fineMode;
+    BoolAttribute m_enabled;
+    BoolAttribute m_conditional;
     BoolAttribute m_active;
     BoolAttribute m_accelerate;
     BoolAttribute m_feedbackEnabled;
+    DoubleAttribute m_multiplier;
 };
 
 #endif // EOSENCODERBLOCK_H
